@@ -1,13 +1,35 @@
 const router = require('express').Router();
 
-// const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi } = require('celebrate');
 
 const { usersRoute } = require('./users');
 const { moviesRoute } = require('./movies');
 const { notFoundRoute } = require('./notFound');
-// const { login, createUser } = require('../controllers/users');
+const { verificationUserLogin, createUser } = require('../controllers/users');
 const auth = require('../middlewares/auth');
-// const { validUrlLink } = require('../middlewares/regularExpression');
+
+router.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30).required(),
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    }),
+  }),
+  createUser,
+);
+
+router.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().email().required(),
+      password: Joi.string().required(),
+    }),
+  }),
+  verificationUserLogin,
+);
 
 router.use(auth);
 

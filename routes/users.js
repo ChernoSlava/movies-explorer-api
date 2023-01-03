@@ -6,12 +6,12 @@ const usersRoute = express.Router();
 const { getUserData, updateUserData } = require('../controllers/users');
 
 usersRoute.get(
-  '/users/me',
+  '/me',
   getUserData,
 );
 
 usersRoute.patch(
-  '/users/me',
+  '/me',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30).required(),
@@ -20,3 +20,5 @@ usersRoute.patch(
   }),
   updateUserData,
 );
+
+module.exports = { usersRoute };

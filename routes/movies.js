@@ -22,7 +22,7 @@ moviesRoute.post(
       year: Joi.string().required(),
       description: Joi.string().required(),
       image: Joi.string().pattern(validUrlLink).uri({ scheme: ['http', 'https'] }).required(),
-      trailer: Joi.string().pattern(validUrlLink).uri({ scheme: ['http', 'https'] }).required(),
+      trailerLink: Joi.string().pattern(validUrlLink).uri({ scheme: ['http', 'https'] }).required(),
       thumbnail: Joi.string().pattern(validUrlLink).uri({ scheme: ['http', 'https'] }).required(),
       movieId: Joi.number().required(),
       nameRU: Joi.string().pattern(validRuName).required(),
@@ -40,3 +40,5 @@ moviesRoute.delete(
   }),
   deleteMovie,
 );
+
+module.exports = { moviesRoute };
