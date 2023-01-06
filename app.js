@@ -5,11 +5,11 @@ const dotenv = require('dotenv');
 const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
 const { errors } = require('celebrate');
 const bodyParser = require('body-parser');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const { limiter } = require('./middlewares/limiter');
 const errorHandler = require('./middlewares/errorHandler');
 const router = require('./routes/index');
 
@@ -29,11 +29,6 @@ app.use(cors(
   },
 ));
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-});
-
 mongoose.connect(config.DB_movies, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -43,9 +38,9 @@ mongoose.connect(config.DB_movies, {
 
 app.use(bodyParser.json());
 app.use(helmet());
+app.use(requestLogger);
 app.use(limiter);
 
-app.use(requestLogger);
 app.use(router);
 
 app.use(errorLogger);

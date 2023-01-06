@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const { validUrlLink } = require('../middlewares/regularExpression');
 
+const { message } = require('../constants/constants');
+
 const movieSchema = new mongoose.Schema({
   country: {
     type: String,
@@ -30,7 +32,7 @@ const movieSchema = new mongoose.Schema({
       validator(v) {
         return validUrlLink.test(v);
       },
-      message: 'Возникла ошибка с валидацией url постера фильма',
+      message: message.movies.imageNoValidModel,
     },
   },
   trailerLink: {
@@ -40,7 +42,7 @@ const movieSchema = new mongoose.Schema({
       validator(v) {
         return validUrlLink.test(v);
       },
-      message: 'Возникла ошибка с валидацией url трейлера фильма',
+      message: message.movies.trailerLinkNoValidModel,
     },
   },
   thumbnail: {
@@ -50,7 +52,7 @@ const movieSchema = new mongoose.Schema({
       validator(v) {
         return validUrlLink.test(v);
       },
-      message: 'Возникла ошибка с валидацией url миниатюрного изображения постера фильма',
+      message: message.movies.thumbnailMiniNoValidModel,
     },
   },
   owner: {

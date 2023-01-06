@@ -7,18 +7,20 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
 
+const { message, errorNames, errorCodes } = require('../constants/constants');
+
 module.exports.getUserData = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
       if (user) {
         res.send(user);
       } else {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        throw new NotFoundError(message.users.notFoundControl);
       }
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+      if (err.name === errorNames.CastError) {
+        next(new BadRequestError(message.users.badRequestControl));
       } else {
         next(err);
       }
@@ -36,14 +38,14 @@ module.exports.updateUserData = (req, res, next) => {
       if (user) {
         res.send(user);
       } else {
-        throw new NotFoundError('Пользователь с указанным _id не найден.');
+        throw new NotFoundError(message.users.notFoundControl);
       }
     })
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      } else if (err.name === 'MongoServerError') {
-        next(new ConflictError('Пользователь с такой почтой уже существует'));
+      if (err.name === errorNames.ValidationError || err.name === errorNames.CastError) {
+        next(new BadRequestError(message.users.badRequestControl));
+      } else if (err.name === errorNames.MongoServerError) {
+        next(new ConflictError(message.users.conflictControl));
       } else {
         next(err);
       }
@@ -67,10 +69,10 @@ module.exports.createUser = (req, res, next) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные'));
-      } else if (err.name === 'MongoError' && err.code === 11000) {
-        next(new ConflictError('Пользователь с такой почтой уже существует'));
+      if (err.name === errorNames.ValidationError) {
+        next(new BadRequestError(message.users.badRequestControl));
+      } else if (err.name === errorNames.MongoError && err.code === errorCodes.Error11000) {
+        next(new ConflictError(message.users.conflictControl));
       } else {
         next(err);
       }

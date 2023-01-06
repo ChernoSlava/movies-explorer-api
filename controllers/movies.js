@@ -4,6 +4,8 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const ForbiddenError = require('../errors/ForbiddenError');
 
+const { message, errorNames } = require('../constants/constants');
+
 module.exports.getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
     .then((movies) => {
@@ -18,8 +20,8 @@ module.exports.createMovie = (req, res, next) => {
       res.send(newMovie);
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+      if (err.name === errorNames.ValidationError) {
+        next(new BadRequestError(message.movies.badRequestControl));
       } else {
         next(err);
       }
@@ -34,10 +36,10 @@ module.exports.deleteMovie = (req, res, next) => {
   Movie.findById(paramsMovieId)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('Какрточка с таким id не найдена');
+        throw new NotFoundError(message.movies.notFoundControl);
       }
       if (movie.owner.toString() !== id) {
-        throw new ForbiddenError('Нет прав на удаление этой карточки');
+        throw new ForbiddenError(message.movies.forbiddenControl);
       } else {
         return movie.remove();
       }
@@ -46,8 +48,8 @@ module.exports.deleteMovie = (req, res, next) => {
       res.send(movie);
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные'));
+      if (err.name === errorNames.CastError) {
+        next(new BadRequestError(message.movies.badRequestControl));
       } else {
         next(err);
       }
